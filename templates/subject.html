@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ subject }} · ENTA Student Space{% endblock %}
+{% block content %}
+<section class="subject-hero">
+  <a class="back-link" href="{{ url_for('index') }}#subjects">← Retour aux matières</a>
+  <span class="eyebrow">ESPACE MATIÈRE</span>
+  <h1>{{ subject }}</h1>
+  <p>Les cours, TD et corrigés PDF de cette matière sont regroupés ici.</p>
+</section>
+<section class="section subject-content">
+  {% for category in categories %}
+    {% set items = resources|selectattr('category','equalto',category)|list %}
+    <div class="subject-resource-group">
+      <div class="subject-group-heading"><h2>{{ category }}</h2><span>{{ items|length }} fichier(s)</span></div>
+      {% if items %}
+        <div class="document-list">
+          {% for item in items %}
+            <article class="document-card">
+              <span class="file-icon">PDF</span>
+              <div class="document-info"><b>{{ item.title }}</b><small>{{ item.program or 'Filière non précisée' }}{% if item.semester %} · {{ item.semester }}{% endif %}</small>{% if item.description %}<p>{{ item.description }}</p>{% endif %}</div>
+              <div class="document-actions"><a class="btn primary" href="{{ url_for('static', filename='uploads/' + item.filename) }}" target="_blank" rel="noopener">Voir PDF</a><a class="btn download-btn" href="{{ url_for('static', filename='uploads/' + item.filename) }}" download>Télécharger</a></div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}<div class="empty-state">Aucun document dans cette rubrique pour le moment.</div>{% endif %}
+    </div>
+  {% endfor %}
+</section>
+{% endblock %}

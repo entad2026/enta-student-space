@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b4e">
+  <title>{% block title %}ENTA Student Space{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{{ url_for('index') }}">
+    <img src="{{ url_for('static', filename='images/enta-logo.png') }}" alt="Logo ENTA Dakhla">
+    <span><b>ENTA</b><small>STUDENT SPACE · DAKHLA</small></span>
+  </a>
+  <nav>
+    <a href="{{ url_for('index') }}#about">À propos</a>
+    <a href="{{ url_for('index') }}#planning">Emploi du temps</a>
+    <a href="{{ url_for('index') }}#subjects">Matières</a>
+    <a href="{{ url_for('index') }}#wifi">Wi-Fi</a>
+    {% if admin_logged_in %}<a class="nav-admin" href="{{ url_for('dashboard') }}">Admin</a>
+    {% else %}<a class="nav-admin" href="{{ url_for('login') }}">Admin</a>{% endif %}
+  </nav>
+</header>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}<div class="flash-wrap">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+{% endwith %}
+<main>{% block content %}{% endblock %}</main>
+<footer><img src="{{ url_for('static', filename='images/enta-logo.png') }}" alt=""><span>ENTA Student Space · Dakhla</span><small>Plateforme étudiante non officielle, gérée par les étudiants.</small></footer>
+</body>
+</html>

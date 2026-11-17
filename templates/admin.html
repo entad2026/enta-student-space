@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% block title %}Dashboard Admin · ENTA{% endblock %}
+{% block content %}
+<section class="admin-hero"><div><span class="eyebrow">ESPACE DE GESTION</span><h1>Dashboard Admin</h1><p>Bienvenue, {{ session.get('admin_username') }}. Gérez le contenu visible par les étudiants.</p></div><a class="btn ghost" href="{{ url_for('logout') }}">Déconnexion</a></section>
+<div class="admin-layout">
+<section class="admin-panel"><h2>Publier des PDF pour une matière</h2>
+<p class="hint">Sélectionne une matière, une rubrique, puis plusieurs fichiers PDF à publier en une seule fois. Les fichiers resteront disponibles aux étudiants.</p>
+<form method="post" action="{{ url_for('add_resource') }}" enctype="multipart/form-data">
+<label>Matière<select name="subject" required>{% for subject in subjects %}<option value="{{ subject }}">{{ subject }}</option>{% endfor %}</select></label>
+<label>Rubrique<select name="category" required><option>Cours</option><option>TD</option><option>Corrigés</option></select></label>
+<label>Fichiers PDF<input type="file" name="files" required accept=".pdf,application/pdf" multiple></label>
+<p class="hint">Tu peux sélectionner plusieurs PDF à la fois. Le titre de chaque document sera créé à partir du nom de son fichier.</p>
+<button class="btn primary">Publier les PDF sélectionnés</button></form></section>
+
+<section class="admin-panel"><h2>Ajouter un emploi du temps</h2><form method="post" action="{{ url_for('add_schedule') }}" enctype="multipart/form-data">
+<label>Titre<input name="title" required placeholder="APCI - Semestre 1 - 2026/2027"></label><label>Filière<input name="program" placeholder="APCI"></label><label>Semestre<input name="semester" placeholder="Semestre 1"></label><label>Image ou PDF<input type="file" name="file" required accept=".pdf,.png,.jpg,.jpeg,.webp"></label><button class="btn primary">Publier le planning</button></form></section>
+
+<section class="admin-panel"><h2>Publier une annonce</h2><form method="post" action="{{ url_for('add_announcement') }}"><label>Titre<input name="title" required></label><label>Message<textarea name="body" rows="4" required></textarea></label><button class="btn primary">Publier l'annonce</button></form></section>
+
+<section class="admin-panel"><h2>Informations du site & Wi-Fi</h2><form method="post" action="{{ url_for('update_settings') }}"><label>Texte d'accueil<textarea name="welcome_text" rows="2">{{ settings.get('welcome_text','') }}</textarea></label><label>Informations Wi-Fi<textarea name="wifi_info" rows="4">{{ settings.get('wifi_info','') }}</textarea></label><button class="btn primary">Enregistrer</button></form><p class="hint">N'inscrivez ici que des identifiants Wi-Fi que l'établissement vous autorise à partager.</p></section>
+
+<section class="admin-panel wide"><h2>Contenu publié</h2>
+<h3>PDF publiés</h3>{% for item in resources %}<div class="manage-row"><span><b>{{ item.title }}</b><small>{{ item.subject }} · {{ item.category }} · {{ item.program }} · {{ item.semester }}</small></span><form method="post" action="{{ url_for('delete_item',kind='resource',item_id=item.id) }}" onsubmit="return confirm('Supprimer ce document ?')"><button class="delete-btn">Supprimer</button></form></div>{% else %}<p class="muted">Aucune ressource.</p>{% endfor %}
+<h3>Emplois du temps</h3>{% for item in schedules %}<div class="manage-row"><span><b>{{ item.title }}</b><small>{{ item.program }} · {{ item.semester }}</small></span><form method="post" action="{{ url_for('delete_item',kind='schedule',item_id=item.id) }}" onsubmit="return confirm('Supprimer ce planning ?')"><button class="delete-btn">Supprimer</button></form></div>{% else %}<p class="muted">Aucun planning.</p>{% endfor %}
+<h3>Annonces</h3>{% for item in announcements %}<div class="manage-row"><span><b>{{ item.title }}</b><small>{{ item.body }}</small></span><form method="post" action="{{ url_for('delete_item',kind='announcement',item_id=item.id) }}" onsubmit="return confirm('Supprimer cette annonce ?')"><button class="delete-btn">Supprimer</button></form></div>{% else %}<p class="muted">Aucune annonce.</p>{% endfor %}
+</section></div>{% endblock %}

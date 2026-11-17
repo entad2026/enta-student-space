@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}ENTA Student Space · Dakhla{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">ESPACE ÉTUDIANT · DAKHLA</span>
+    <h1>Tout pour tes études,<br><em>au même endroit.</em></h1>
+    <p>{{ settings.get('welcome_text','Toutes les ressources étudiantes de l’ENTA Dakhla réunies au même endroit.') }}</p>
+    <div class="hero-actions"><a class="btn primary" href="#subjects">Explorer les ressources</a><a class="btn ghost" href="#planning">Voir l'emploi du temps</a></div>
+  </div>
+  <div class="hero-mark"><img src="{{ url_for('static', filename='images/enta-logo.png') }}" alt="École Nationale des Technologies Avancées - Dakhla"></div>
+</section>
+
+<section class="section" id="about">
+  <div class="section-heading"><div><span class="eyebrow">BIENVENUE</span><h2>À propos de l'ENTA</h2></div><span class="section-index">01 / 05</span></div>
+  <div class="about-card">
+    <div class="about-icon">⌁</div>
+    <div><h3>École Nationale des Technologies Avancées – Dakhla</h3>
+    <p>Un espace numérique destiné aux étudiants pour retrouver les emplois du temps, les cours, les travaux dirigés et les informations pratiques de la vie étudiante.</p></div>
+  </div>
+</section>
+
+<section class="section" id="planning">
+  <div class="section-heading"><div><span class="eyebrow">ORGANISATION</span><h2>Emploi du temps</h2></div><span class="section-index">02 / 05</span></div>
+  {% if schedules %}
+    <div class="schedule-grid">
+    {% for item in schedules %}
+      <article class="schedule-card">
+        <div class="card-top"><span class="tag">PLANNING</span><span>{{ item.semester or 'Semestre à préciser' }}</span></div>
+        <h3>{{ item.title }}</h3><p>{{ item.program }}</p>
+        {% if item.filename.lower().endswith(('.png','.jpg','.jpeg','.webp')) %}
+          <a href="{{ url_for('static', filename='uploads/' + item.filename) }}" target="_blank"><img class="schedule-img" src="{{ url_for('static', filename='uploads/' + item.filename) }}" alt="{{ item.title }}"></a>
+        {% else %}<a class="file-link" href="{{ url_for('static', filename='uploads/' + item.filename) }}" target="_blank">Ouvrir le planning ↗</a>{% endif %}
+      </article>
+    {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">Les emplois du temps seront publiés ici par l'administration.</div>
+  {% endif %}
+</section>
+
+<section class="section" id="subjects">
+  <div class="section-heading"><div><span class="eyebrow">BIBLIOTHÈQUE ÉTUDIANTE</span><h2>Choisir une matière</h2></div><span class="section-index">03 / 06</span></div>
+  <p class="section-intro">Choisis une matière pour accéder à ses cours, TD et corrigés PDF.</p>
+  <div class="subject-grid">
+    {% for subject in subjects %}
+      <a class="subject-card" href="{{ url_for('subject_page', slug=subject_urls[subject]) }}">
+        <span class="subject-icon">{{ loop.index }}</span>
+        <span class="subject-card-text"><b>{{ subject }}</b><small>{{ resources|selectattr('subject','equalto',subject)|list|length }} document(s) disponible(s)</small></span>
+        <span class="subject-arrow">→</span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section" id="wifi">
+  <div class="section-heading"><div><span class="eyebrow">CONNEXION</span><h2>Wi-Fi étudiant</h2></div><span class="section-index">04 / 06</span></div>
+  <div class="wifi-card"><div class="wifi-symbol">⌁</div><div><h3>Accès au réseau Wi-Fi</h3><p>{{ settings.get('wifi_info','Les informations Wi-Fi seront publiées par l’administration.') }}</p><small>Les identifiants officiels doivent être communiqués par l'établissement.</small></div></div>
+</section>
+
+<section class="section" id="news">
+  <div class="section-heading"><div><span class="eyebrow">ACTUALITÉS</span><h2>Annonces étudiantes</h2></div><span class="section-index">05 / 06</span></div>
+  {% if announcements %}<div class="news-grid">{% for item in announcements %}<article class="news-card"><small>{{ item.created_at }}</small><h3>{{ item.title }}</h3><p>{{ item.body }}</p></article>{% endfor %}</div>
+  {% else %}<div class="empty-state">Les annonces importantes apparaîtront ici.</div>{% endif %}
+</section>
+{% endblock %}

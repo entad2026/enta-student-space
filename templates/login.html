@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block title %}Admin · Connexion{% endblock %}
+{% block content %}<section class="auth-shell"><div class="auth-card"><span class="eyebrow">ZONE SÉCURISÉE</span><h1>Connexion Admin</h1><p>Connectez-vous pour gérer les ressources de l'ENTA Student Space.</p>
+<form method="post"><label>Identifiant<input name="username" required autocomplete="username"></label><label>Mot de passe<input type="password" name="password" required autocomplete="current-password"></label><button class="btn primary full">Se connecter</button></form>
+<a class="back-link" href="{{ url_for('index') }}">← Retour au site</a></div></section>{% endblock %}
